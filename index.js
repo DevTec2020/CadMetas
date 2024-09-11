@@ -1,16 +1,29 @@
 const { select, input, checkbox } = require('@inquirer/prompts');
+const fs = require("fs").promises
 
 let mensagem = "Bem vindo ao app de Metas";
 
-let meta = {
-    value: 'Tomar 3L de água por dia',
-    checked: false,
+let metas
+
+//Lê o arquivo json e joga os dados para o array metas
+const carregarMetas = async () => {
+    try{
+        const dados = await fs.readFile("metas.json", "utf-8")
+        metas = JSON.parse(dados)
+    }
+    catch(erro){
+        metas = []
+    }
 }
 
-let metas = [meta]
+//Trasforma o arry metas em arquivo Json
+const salvarMetas = async () => {
+    await fs.writeFile ("metas.json", JSON.stringify(metas,null,2))
+}
 
+//Cadastro de metas
 const cadastrarMeta = async () => {
-    const meta = await input ({message: "\nDigite a meta "})
+    const meta = await input ({message: "\nDigite a meta:\n"})
 
     if (meta.length == 0){
         mensagem ="A meta não pode ser vazia"
@@ -25,6 +38,7 @@ const cadastrarMeta = async () => {
         
 }
 
+//Listagem de metas e marcação da box para checked true ou false
 const listarMetas = async () => {
     if (metas.length == 0){
         mensagem ="Você não possui metas, cadastre uma."
@@ -59,6 +73,7 @@ const listarMetas = async () => {
     mensagem ="Meta(s) marcadas como concluida(s)"
 }
 
+//Mostra as metas com ckeched true
 const metasRealizadas = async () => {
     const realizadas = metas.filter ((meta) => {
         return meta.checked
@@ -75,6 +90,7 @@ const metasRealizadas = async () => {
     })
 }
 
+//Mostra as metas com o ckeched false
 const metasAbertas = async () => {
     const abertas = metas.filter ((meta) => {
         return meta.checked != true
@@ -91,6 +107,7 @@ const metasAbertas = async () => {
     })
 }
 
+//deleta a meta marcada na box
 const deletarMetas = async () => {
     if (metas.length == 0){
         mensagem ="Você não possui metas, cadastre uma."
@@ -121,6 +138,7 @@ const deletarMetas = async () => {
     mensagem ="Meta(s) deletada(s) com Sucesso!"
 }
 
+//Controle de mensagem que tambem limpa a tela do console
 const mostrarMensagem = () => {
     console.clear();
 
@@ -132,8 +150,11 @@ const mostrarMensagem = () => {
 }
 
 const start = async () => {
+    //Para aguardar carregar as metas antes de iniciar o menu
+    await carregarMetas();
     while (true) {
         mostrarMensagem();
+        await salvarMetas();
         //Codigo para aguarar o usuário digitar algo antes de proceguir
         const opcao = await select({
             message: "Menu",
@@ -150,7 +171,6 @@ const start = async () => {
         switch (opcao) {
             case "cadastrar":
                 await cadastrarMeta();
-                console.log(metas)
                 break;
             
             case "listar":
