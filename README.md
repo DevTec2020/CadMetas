@@ -25,5 +25,5 @@ Este sistema fiz junto a equipe da Rocketseat no bootcamp NLW Pocket para gerenc
 - **Assíncrono**: As operações de leitura e escrita em arquivo são feitas de forma assíncrona usando fs.promises.
 
 ## Dependências
-`@inquirer/prompts`: Gerenciamento de prompts interativos no terminal.
-`fs`: Manipulação de arquivos no sistema de arquivos.
+- `@inquirer/prompts`: Gerenciamento de prompts interativos no terminal.
+- `fs`: Manipulação de arquivos no sistema de arquivos.
